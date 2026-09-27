@@ -1,0 +1,6 @@
+---
+scripts:
+  setup: |
+    mise trust --yes
+    mise install
+    uvx pre-commit install --overwrite
