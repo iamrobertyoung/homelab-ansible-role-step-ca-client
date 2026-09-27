@@ -1,9 +1,19 @@
 ---
 - name: Converge
-  hosts: all
+  hosts: instance
   become: true
   vars:
-    step_ca_client_provisioner_password: "{{ lookup('amazon.aws.ssm_parameter', '/home-server/step-ca-ansible-password') }}"
+    step_ca_client_url: https://step-ca:9000
+    step_ca_client_fingerprint: "{{ step_ca_fingerprint.stdout | trim }}"
+    step_ca_client_provisioner_password: molecule-password
+  pre_tasks:
+    - name: Read the ephemeral CA's root fingerprint
+      ansible.builtin.raw: step certificate fingerprint /home/step/certs/root_ca.crt
+      delegate_to: step-ca
+      become: false
+      register: step_ca_fingerprint
+      changed_when: false
+
   tasks:
     - name: Include role for first domain
       ansible.builtin.include_role:

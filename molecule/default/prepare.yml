@@ -1,6 +1,24 @@
 ---
+# The image ships without python, so only raw works against it.
+- name: Prepare step-ca
+  hosts: step-ca
+  gather_facts: false
+  tasks:
+    - name: Wait for step-ca to initialise
+      ansible.builtin.raw: step ca health --ca-url https://localhost:9000 --root /home/step/certs/root_ca.crt
+      register: step_ca_health
+      until: step_ca_health.rc == 0
+      retries: 30
+      delay: 2
+      changed_when: false
+
+    # The role requests 168h certificates, beyond the 24h JWK provisioner default.
+    - name: Raise the provisioner's maximum certificate duration
+      ansible.builtin.raw: step ca provisioner update ansible --x509-max-dur 720h && kill -HUP 1
+      changed_when: true
+
 - name: Prepare
-  hosts: all
+  hosts: instance
   become: true
   tasks:
     - name: Install python3-debian for deb822_repository module
