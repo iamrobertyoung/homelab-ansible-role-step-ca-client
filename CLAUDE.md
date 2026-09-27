@@ -10,13 +10,13 @@ This is an Ansible role (`step_ca_client`) for configuring step-ca client on Ubu
 
 ### Testing
 ```bash
-# Run full molecule test suite (requires AWS credentials for SSM parameter lookup)
-aws-vault exec iamrobertyoung:home-assistant-production:p -- molecule test
+# Run full molecule test suite (starts an ephemeral step-ca container alongside the instance)
+molecule test
 
 # Run individual molecule stages
-aws-vault exec iamrobertyoung:home-assistant-production:p -- molecule converge  # Apply role
-aws-vault exec iamrobertyoung:home-assistant-production:p -- molecule verify    # Run verification
-aws-vault exec iamrobertyoung:home-assistant-production:p -- molecule destroy   # Cleanup
+molecule converge  # Apply role
+molecule verify    # Run verification
+molecule destroy   # Cleanup
 ```
 
 ### Linting
